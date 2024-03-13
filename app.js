@@ -83,9 +83,9 @@ app.use(session({
 }));
 
 //Database connection
-//mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI);
 
-mongoose.connect('mongodb://localhost/taskm');
+//mongoose.connect('mongodb://localhost/taskm');
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
