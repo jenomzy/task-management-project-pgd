@@ -12,7 +12,7 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var http = require('http');
 var socketIo = require('socket.io');
-const RedisStore = require('connect-redis')(session);
+const RedisStore = require('connect-redis').default;
 const redisClient = require('redis').createClient();
 
 
