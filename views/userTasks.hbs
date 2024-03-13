@@ -1,0 +1,75 @@
+<a href="/usermanage" class="btn btn-primary mb-3">Back</a>
+<h1 class="mb-4">User Tasks</h1>
+
+<div class="accordion" id="accordionTasks">
+    <div class="accordion-item">
+        <div class="accordion-header">Ongoing Tasks</div>
+        <div class="accordion-content">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Task Name</th>
+                        <th>Description</th>
+                        <th>Assigned Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each ongoingTasks}}
+                    <tr>
+                        <td>{{taskName}}</td>
+                        <td>{{description}}</td>
+                        <td>{{team}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <div class="accordion-header">Completed Tasks</div>
+        <div class="accordion-content">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Task Name</th>
+                        <th>Description</th>
+                        <th>Assigned Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each completedTasks}}
+                    <tr>
+                        <td>{{taskName}}</td>
+                        <td>{{description}}</td>
+                        <td>{{team}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <div class="accordion-header">User Teams</div>
+        <div class="accordion-content">
+            <ul class="list-group">
+                {{#each userTeams}}
+                <li class="list-group-item">{{name}} - {{status}}</li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.accordion-header').click(function () {
+            // Toggle the content of the clicked accordion item
+            $(this).next('.accordion-content').slideToggle();
+
+            // Hide other accordion items
+            $('.accordion-content').not($(this).next('.accordion-content')).slideUp();
+        });
+    });
+</script>

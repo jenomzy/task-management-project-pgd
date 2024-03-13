@@ -1,0 +1,117 @@
+<div class="w3-container">
+    <div class="w3-card-4">
+        <div class="w3-container">
+            <p><strong>Name:</strong> {{ user.fname }} {{ user.lname }}</p>
+            <p><strong>Position:</strong> {{ user.position }}</p>
+            <p><strong>Email:</strong> {{ user.username }}</p>
+        </div>
+    </div>
+</div>
+<br>
+{{#eq user.position "Manager"}}
+{{/eq}}
+{{#neq user.position "Manager"}}
+<div class="w3-row-padding">
+    <div class="w3-col s4">
+        <div class="w3-card-4">
+            <header class="w3-container w3-center">
+                <h3>
+                    <p>Total Projects</p>
+                </h3>
+            </header>
+
+            <div class="w3-container w3-center">
+                <p>
+                <h1>{{sumTasksCount user.ongoingTasksCount user.completedTasksCount}}</h1>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="w3-col s4">
+        <div class="w3-card-4">
+            <header class="w3-container w3-center">
+                <h3>
+                    <p>Ongoing Projects</p>
+                </h3>
+            </header>
+
+            <div class="w3-container w3-center">
+                <p>
+                <h1>{{user.ongoingTasksCount}}</h1>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="w3-col s4">
+        <div class="w3-card-4">
+            <header class="w3-container w3-center">
+                <h3>
+                    <p>Completed Projects</p>
+                </h3>
+            </header>
+
+            <div class="w3-container w3-center">
+                <p>
+                <h1>{{user.completedTasksCount}}</h1>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="w3-container">
+    <div class="w3-card-4">
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+{{/neq}}
+
+<script>
+    const ctx = document.getElementById('myChart');
+
+    const ap = {{ user.ongoingTasksCount }}; // Ongoing projects data
+    const cp = {{ user.completedTasksCount }}; // Completed projects data
+    const tp = ap + cp; // Total projects data
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Total Projects', 'Completed', 'Ongoing'],
+            datasets: [{
+                axis: 'y',
+                label: 'Projects',
+                data: [tp, ap, cp],
+                fill: false,
+                backgroundColor: [
+                    'rgba(201, 203, 207, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(255, 99, 132, 0.2)'
+                ],
+                borderColor: [
+                    'rgb(201, 203, 207)',
+                    'rgb(75, 192, 192)',
+                    'rgb(255, 99, 132)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Projects'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Number of Projects'
+                    }
+                }
+            }
+        }
+    });
+</script>

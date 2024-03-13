@@ -1,0 +1,2 @@
+sudo systemctl status mongod - mongodb status check
+sudo service mongod restart - restart mongodb

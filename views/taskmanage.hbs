@@ -1,0 +1,149 @@
+{{!-- Manage tasks Content --}}
+<!-- Button to open Create Task Modal -->
+<button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+    Create New Task
+</button><br>
+<button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#taskcomplete">
+    Complete task
+</button>
+<button class="w3-button w3-xlarge w3-circle w3-black" data-bs-toggle="modal"
+    data-bs-target="#taskcomplete">+</button><br><br>
+<!-- Filter Tasks Section -->
+<div class="btn-group mb-3" role="group" aria-label="Filter Tasks">
+    <button type="button" class="btn btn-secondary filter-task active" data-status="all">All Tasks</button>
+    <button type="button" class="btn btn-secondary filter-task" data-status="ongoing">Ongoing Tasks</button>
+    <button type="button" class="btn btn-secondary filter-task" data-status="completed">Completed Tasks</button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Task Name</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Due Date</th>
+            <th>Completed Date</th>
+            <th>Assigned Team</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each tasks}}
+        <tr class="task-row" data-status="{{status}}">
+            <td>{{taskName}}</td>
+            <td>{{description}}</td>
+            <td>{{status}}</td>
+            <td>{{priority}}</td>
+            <td>{{dueDate}}</td>
+            <td>{{date}}</td>
+            <td><a href="/teaminfo">{{team}}</a></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<!-- Create Task Form -->
+
+<!-- Create Team Task Modal -->
+<div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create Team Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createTaskForm" action="/create-team-task" method="POST">
+                    <div class="mb-3">
+                        <label for="taskName" class="form-label">Task Name</label>
+                        <input type="text" class="form-control" id="taskName" name="taskName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="priority" class="form-label">Priority</label>
+                        <select class="form-select" id="priority" name="priority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dueDate" class="form-label">Due Date</label>
+                        <input type="date" class="form-control" id="dueDate" name="dueDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="team" class="form-label">Team</label>
+                        <select class="form-select" id="team" name="team">
+                            {{#each teams}}
+                            <option value="{{_id}}">{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Task</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Complete Task Modal -->
+<div class="modal fade" id="taskcomplete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Complete Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createTaskForm" action="/complete-team-task" method="POST">
+                    <div class="mb-3">
+                        <label for="task" class="form-label">Task</label>
+                        <select class="form-select" id="task" name="task">
+                            {{#each task}}
+                            <option value="{{_id}}">{{taskName}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Complete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        // Event listener for filter buttons
+        $('.filter-task').on('click', function () {
+            // Toggle active class on filter buttons
+            $('.filter-task').removeClass('active');
+            $(this).addClass('active');
+
+            var status = $(this).data('status');
+            filterTasks(status);
+        });
+
+        // Function to filter tasks based on status
+        function filterTasks(status) {
+            // Show all tasks
+            if (status === 'all') {
+                $('.task-row').show();
+            } else {
+                // Hide tasks that don't match the selected status
+                $('.task-row').each(function () {
+                    var taskStatus = $(this).data('status');
+                    if (taskStatus !== status) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+            }
+        }
+    });
+</script>

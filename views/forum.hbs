@@ -1,0 +1,121 @@
+<div class="container">
+    <div class="row">
+        <!-- General Chat Section -->
+        <div class="col-md-12">
+            <h2>General Chat</h2>
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#general-chat"
+                aria-expanded="true" aria-controls="general-chat">
+                Toggle General Chat
+            </button>
+            <div class="collapse show" id="general-chat">
+                <div class="card card-body">
+                    <!-- Display general chat messages here -->
+                    <ul id="general-messages" class="list-group">
+                        <!-- Messages will be dynamically added here -->
+                    </ul>
+                    <!-- Message input form -->
+                    <form id="general-message-form">
+                        <div class="mb-3">
+                            <input type="text" id="general-message-input" class="form-control"
+                                placeholder="Type your message...">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{#neq user.position "Manager"}}
+    <!-- Team Chat Section -->
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Team Chat</h2>
+            <div id="team-accordion">
+                {{#each teamChatGroups}}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="team-heading-{{this._id}}">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#team-collapse-{{this._id}}" aria-expanded="false"
+                            aria-controls="team-collapse-{{this._id}}">
+                            Team: {{this.forumname}}
+                        </button>
+                    </h2>
+                    <div id="team-collapse-{{this._id}}" class="accordion-collapse collapse"
+                        aria-labelledby="team-heading-{{this._id}}" data-bs-parent="#team-accordion">
+                        <div class="accordion-body">
+                            <!-- Display team chat messages here -->
+                            <ul class="list-group">
+                            </ul>
+                            <!-- Message input form -->
+                            <form class="team-message-form" data-team-id="{{this._id}}">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control team-message-input"
+                                        placeholder="Type your message...">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Send</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    {{/neq}}
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/socket.io@4.4.1/dist/socket.io.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const socket = io();
+
+        // Handle sending general chat messages
+        document.getElementById('general-message-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const messageInput = document.getElementById('general-message-input');
+            const message = messageInput.value.trim();
+            if (message !== '') {
+                // Emit 'sendMessage' event to server with message and forum type
+                socket.emit('sendMessage', { message, forumType: 'general' });
+                messageInput.value = ''; // Clear input field
+            }
+        });
+
+        // Handle receiving chat messages for general chat
+        socket.on('message', (data) => {
+            // Update UI with received message
+            const generalMessagesContainer = document.getElementById('general-messages');
+            const messageElement = document.createElement('li');
+            messageElement.textContent = data.message;
+            generalMessagesContainer.appendChild(messageElement);
+        });
+
+        // Handle sending team chat messages
+        document.querySelectorAll('.team-message-form').forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const teamId = form.dataset.teamId;
+                const messageInput = form.querySelector('.team-message-input');
+                const message = messageInput.value.trim();
+                if (message !== '') {
+                    // Emit 'sendMessage' event to server with message, forum type (team), and teamId
+                    socket.emit('sendMessage', { message, forumType: 'team', teamId });
+                    messageInput.value = ''; // Clear input field
+                }
+            });
+        });
+
+        // Handle receiving chat messages for team chats
+        socket.on('teamMessage', (data) => {
+            // Update UI with received message
+            const teamMessagesContainer = document.getElementById(`team-messages-${data.teamId}`);
+            const messageElement = document.createElement('li');
+            messageElement.textContent = `${data.message.userId} - ${data.message.text}`;
+            teamMessagesContainer.appendChild(messageElement);
+        });
+
+    });
+</script>

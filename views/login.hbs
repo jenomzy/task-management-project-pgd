@@ -1,0 +1,45 @@
+<div class="row">
+    <div class="col-sm"></div>
+    <div class="col-sm">
+        <div class="border border-2 p-3" id="login">
+            <h2 class="page-header">Account Login</h2>
+            <form method="post" action="/login">
+                {{#if message}}
+                <div class="alert alert-danger" role="alert">
+                    {{message}}
+                </div>
+                {{/if}}
+                <div class="mb-3 mt-3">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="username" placeholder="Enter email" name="username" />
+                </div>
+                <div class="mb-3">
+                    <label for="pwd">Password:</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="password" placeholder="Enter password"
+                            name="password" />
+                        <button class="btn btn-outline-secondary" type="button" id="passwordToggleBtn"
+                            onclick="togglePasswordVisibility()">Show Password</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-sm"></div>
+</div>
+
+<script>
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById("password");
+        var passwordToggleBtn = document.getElementById("passwordToggleBtn");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordToggleBtn.textContent = "Hide Password";
+        } else {
+            passwordInput.type = "password";
+            passwordToggleBtn.textContent = "Show Password";
+        }
+    }
+</script>

@@ -1,0 +1,157 @@
+<button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#createteam">
+    Create New Team
+</button>
+<button class="w3-button w3-xlarge w3-circle w3-black" data-bs-toggle="modal" data-bs-target="#createteam">+</button>
+
+<button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#disbandteam">
+    Disband Team
+</button>
+<button class="w3-button w3-xlarge w3-circle w3-black" data-bs-toggle="modal" data-bs-target="#disbandteam">+</button>
+<br><br>
+<div class="input-group mb-3">
+    <label class="input-group-text" for="teamFilter">Filter Teams</label>
+    <select class="form-select" id="teamFilter">
+        <option value="all">All Teams</option>
+        <option value="active">Active Teams</option>
+        <option value="disbanded">Disbanded Teams</option>
+    </select>
+</div>
+<br>
+<div class="w3-responsive">
+    <table id="teamTable" class="w3-table-all w3-card-4">
+        <thead>
+            <tr>
+                <th>Team Name</th>
+                <th>Team Leader</th>
+                <th>Team Members</th>
+                <th>Team Status</th>
+                <th>Created</th>
+                <th>Disbanded</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each teams as |team|}}
+            <tr class="team-row">
+                <td>{{team.name}}</td>
+                <td>{{team.leader.fname}} {{team.leader.lname}}</td>
+                <td>
+                    {{#each team.members as |member|}}
+                    {{member.fname}} {{member.lname}}
+                    {{#unless @last}}, {{/unless}}
+                    {{/each}}
+                </td>
+                <td>{{#if team.disbanded}}Disbanded{{else}}Active{{/if}}</td>
+                <td>{{team.creationDate}}</td>
+                <td>{{#if team.disbanded}}{{team.disbandedDate}}{{else}}N/A{{/if}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<!-- The Create Team Modal -->
+<div class="modal fade" id="createteam">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">New Team Creation</h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form action="/createteam" method="POST" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="teamName" class="form-label">Team Name:</label>
+                        <input type="text" id="teamName" name="teamName" class="form-control" required>
+                        <div class="invalid-feedback">Team name is required.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="leaderId" class="form-label">Select Team Leader:</label>
+                        <select id="leaderId" name="leaderId" class="form-select" required>
+                            {{#each teamLeaders}}
+                            <option value="{{_id}}">{{fname}} {{lname}}</option>
+                            {{/each}}
+                        </select>
+                        <div class="invalid-feedback">Please select a team leader.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Select Team Members:</label><br>
+                        {{#each teamMembers}}
+                        <div class="form-check">
+                            <input type="checkbox" id="member_{{_id}}" name="memberIds[]" value="{{_id}}"
+                                class="form-check-input">
+                            <label for="member_{{_id}}" class="form-check-label">{{fname}} {{lname}}</label>
+                        </div>
+                        {{/each}}
+                    </div>
+                    <button type="submit" class="btn btn-primary"
+                        onclick="return confirm('Are you sure you want to Create this team?');">Create Team</button>
+                </form>
+
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- The Disband Team Modal -->
+<div class="modal fade" id="disbandteam">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Disband Team</h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form id="disbandTeamForm" action="/disbandteam" method="POST">
+                    <h3 class="mb-3">Disband Team</h3>
+                    <div class="mb-3">
+                        <label for="teamSelect" class="form-label">Select Team:</label>
+                        <select id="teamSelect" name="teamId" class="form-select" required onchange="updateTeamInfo()">
+                            {{#each teamactive}}
+                            <option value="{{_id}}">{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div id="teamInfo" class="mb-3"></div>
+                    <button type="submit" class="btn btn-danger"
+                        onclick="return confirm('Are you sure you want to disband this team?');">Disband Team</button>
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('teamFilter').addEventListener('change', function () {
+        const selectedValue = this.value;
+        const rows = document.querySelectorAll('.team-row');
+
+        rows.forEach(row => {
+            const statusCell = row.querySelector('td:nth-child(4)');
+            const status = statusCell.textContent.toLowerCase();
+
+            if (selectedValue === 'all' || selectedValue === status) {
+                row.classList.remove('d-none'); // Show row
+            } else {
+                row.classList.add('d-none'); // Hide row
+            }
+        });
+    });
+</script>

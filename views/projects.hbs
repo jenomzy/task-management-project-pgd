@@ -1,0 +1,178 @@
+<!-- Projects Content -->
+<div class="project-section">
+    <h1>Ongoing Projects</h1>
+    <div class="row">
+        {{#each ongoingTasks as |task|}}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{task.taskName}}</h5>
+                    {{#if task.dueDate}}Green{{else}}Red{{/if}}
+                    <p class="card-text"><strong>Description:</strong> {{task.description}}</p>
+                    <p class="card-text"><strong>Deadline:</strong> {{task.dueDate}}</p>
+                    {{#if task.files}}<button class="btn btn-secondary"
+                        onclick="openFileExplorerModal('{{task._id}}')">Explore
+                        Files</button>{{/if}}
+                    <button class="btn btn-primary" onclick="openTaskModal('{{task._id}}')">View More Info</button>
+                    <button class="btn btn-info mt-2" onclick="openTaskCommentModal('{{task._id}}')">View Chats</button>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+
+<div class="project-section">
+    <h1>Completed Projects</h1>
+    <div class="row">
+        {{#each completedTasks as |task|}}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{task.taskName}}</h5>
+                    <p class="card-text"><strong>Description:</strong> {{task.description}}</p>
+                    <p class="card-text"><strong>Deadline:</strong> {{task.dueDate}}</p>
+                    <p class="card-text"><strong>Submission Date:</strong> {{task.submissionDate}}</p>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<!-- File Explorer Modal -->
+<div id="fileExplorerModal" class="modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="fileList">
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="closeFileExplorerModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Task Info Modal -->
+<div id="taskModal" class="modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="taskInfo">
+                    <p><strong>Task Name:</strong> <span id="taskName"></span></p>
+                    <p><strong>Assigned Team:</strong> <span id="assignTeam"></span></p>
+                    <p><strong>Description:</strong> <span id="taskDescription"></span></p>
+                    <p><strong>Priority:</strong> <span id="taskPriority"></span></p>
+                    <p><strong>Due Date:</strong> <span id="taskDueDate"></span></p>
+                </div>
+                <hr>
+                <!-- Upload Task Form -->
+                <form id="taskSubmissionForm" action="/taskupload" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="comment">Comment:</label>
+                        <textarea class="form-control" id="comment" name="comment"
+                            placeholder="Enter a comment"></textarea>
+                    </div>
+                    <input type="hidden" id="taskId" name="taskId" value="{{ taskId }}">
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="taskSubmission" name="file"
+                            placeholder="Task Submission">
+                        <button class="btn btn-success" type="submit">Upload</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="closeTaskModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Task Comment Modal -->
+<div id="commentModal" class="modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="taskComments">
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="closeTaskCommentModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to open the task info modal
+    function openTaskModal(taskId) {
+        // AJAX call to fetch task info and populate modal content
+        $.get(`/task/${taskId}`, function (data) {
+            // Populate the modal with task information
+            $('#taskName').text(data.taskName);
+            $('#taskDescription').text(data.description);
+            $('#taskPriority').text(data.priority);
+            $('#taskDueDate').text(data.dueDate);
+
+            // Populate the form hidden inputs with member ID and team ID
+            $('#taskId').val(taskId);
+
+            $('#taskModal').show();
+        })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("Failed to fetch task info:", textStatus, errorThrown); // Log any errors
+            });
+    }
+
+    // Function to close the task info modal
+    function closeTaskModal() {
+        $('#taskModal').hide();
+    }
+
+    // Function to open the task comment modal
+    function openTaskCommentModal(taskId) {
+        // AJAX call to fetch task comments and populate modal content
+        $.get(`/task/${taskId}/comments`, function (data) {
+            $('#taskComments').html(data);
+            $('#commentModal').show();
+        })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("Failed to fetch task comments:", textStatus, errorThrown); // Log any errors
+            });
+    }
+
+    // Function to close the task comment modal
+    function closeTaskCommentModal() {
+        $('#commentModal').hide();
+    }
+
+    // Function to open the file explorer modal for a specific task
+    function openFileExplorerModal(taskId) {
+        // Fetch task files from the server
+        $.get(`/task/${taskId}/files`, function (files) {
+            // Populate the file explorer modal with the list of files
+            var fileList = $('#fileList');
+            fileList.empty(); // Clear previous file list
+            files.forEach(function (file) {
+                // Check if uploadedBy is defined before accessing its properties
+                var uploadedBy = (file.uploadedBy && file.uploadedBy.fname && file.uploadedBy.lname) ? `${file.uploadedBy.fname} ${file.uploadedBy.lname}` : 'Unknown';
+                fileList.append(`<div><a href="${file.filePath}" target="_blank">${file.fileName}</a> (uploaded by ${uploadedBy}) - ${file.note}</div>`);
+            });
+            // Show the file explorer modal
+            $('#fileExplorerModal').show();
+        });
+    }
+
+
+    // Function to close the file explorer modal
+    function closeFileExplorerModal() {
+        $('#fileExplorerModal').hide();
+    }
+
+</script>

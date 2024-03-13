@@ -1,0 +1,136 @@
+<div class="container">
+    <!-- Task Overview -->
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Task Overview</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Deadline</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each tasks}}
+                    <tr>
+                        <td>{{this.taskName}}</td>
+                        <td>{{this.dueDate}}</td>
+                        <td>{{this.priority}}</td>
+                        <td>{{this.status}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id='calendar'></div>
+    <!-- Upcoming Deadlines -->
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Upcoming Deadlines</h2>
+            <ul class="list-group">
+                {{#each upcomingTasks}}
+                <li class="list-group-item">
+                    <strong>{{this.taskName}}</strong> - Deadline: {{this.dueDate}}
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+    <!-- Team Collaboration -->
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Team Collaboration</h2>
+            <ul class="list-group">
+                {{#each teamActivities}}
+                <li class="list-group-item">
+                    {{this.activity}}
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+    <!-- Task Progress -->
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Task Progress</h2>
+            <canvas id="taskProgressChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+    <!-- Personalization Options -->
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Personalization Options</h2>
+            <!-- Include options for customizing dashboard layout -->
+        </div>
+    </div>
+    <!-- User Insights -->
+    <div class="row">
+        <div class="col-md-6">
+            <h2>User Insights</h2>
+            <!-- Include insights into user activity -->
+        </div>
+    </div>
+</div>
+
+<!-- Include JavaScript for task progress chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ap = {{ user.ongoingTasksCount }}; // Ongoing projects data
+    const cp = {{ user.completedTasksCount }}; // Completed projects data
+    const tp = ap + cp; // Total projects data
+    document.addEventListener('DOMContentLoaded', () => {
+        const ctx = document.getElementById('taskProgressChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Completed', 'In Progress', 'Total'],
+                datasets: [{
+                    label: 'Task Progress',
+                    data: [cp, ap, tp],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var tasks = {{{ tasks }}};
+        
+        var events = tasks.map(function(task) {
+            return {
+                title: task.taskName,
+                start: moment(task.dueDate).format('YYYY-MM-DD')
+            };
+        });
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: events
+        });
+        
+        calendar.render();
+    });
+
+</script>

@@ -1,0 +1,33 @@
+<div class="container">
+    <a href="/usermanage" class="btn btn-primary mb-3">Back</a>
+    <h1 class="mb-4">Edit User</h1>
+    <form action="/update/user/{{users._id}}" method="POST">
+        <div class="mb-3">
+            <label for="fname" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="fname" name="fname" value="{{users.fname}}">
+        </div>
+        <div class="mb-3">
+            <label for="lname" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="lname" name="lname" value="{{users.lname}}">
+        </div>
+        <div class="mb-3">
+            <label for="username" class="form-label">Email</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{users.username}}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="position" class="form-label">Position</label>
+            <select class="form-select" id="position" name="position">
+                <option value="Team Leader" {{#ifCond users.position '===' 'Team Leader' }}selected{{/ifCond}}>Team
+                    Leader</option>
+                <option value="Team Member" {{#ifCond users.position '===' 'Team Member' }}selected{{/ifCond}}>Team
+                    Member</option>
+                <option value="Manager" {{#ifCond users.position '===' 'Manager' }}selected{{/ifCond}}>Manager</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="text" class="form-control" id="phone" name="phone" value="{{users.phone}}">
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+</div>

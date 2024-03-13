@@ -1,0 +1,42 @@
+body {
+  padding: 5px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  height: 100%;
+}
+
+a {
+  color: #000000;
+}
+
+div .cbg {
+  background-color: #ebebeb;
+  padding: 20px;
+}
+
+#login {
+  background-color: aliceblue;
+}
+
+.titlehead {
+  font-weight: bold;
+}
+
+.titlebody {
+  font-style: italic;
+}
+
+.accordion-item {
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.accordion-header {
+  background-color: #f1f1f1;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.accordion-content {
+  display: none;
+  padding: 10px;
+}
