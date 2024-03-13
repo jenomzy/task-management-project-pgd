@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
+require('dotenv').config();
 var session = require('express-session');
 var passport = require('passport');
 var expressValidator = require('express-validator');
