@@ -12,8 +12,6 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var http = require('http');
 var socketIo = require('socket.io');
-const RedisStore = require('connect-redis').default;
-const redisClient = require('redis').createClient();
 
 
 var indexRouter = require('./routes/index');
@@ -75,11 +73,8 @@ async function getGeneralForumId() {
   return generalForum._id;
 }
 
-
-
 //Session management
 app.use(session({
-    store: new RedisStore({ client: redisClient }),
     secret: 'your-secret',
     resave: false,
     saveUninitialized: false
