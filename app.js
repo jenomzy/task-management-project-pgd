@@ -12,6 +12,8 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var http = require('http');
 var socketIo = require('socket.io');
+const RedisStore = require('connect-redis')(session);
+const redisClient = require('redis').createClient();
 
 
 var indexRouter = require('./routes/index');
@@ -77,10 +79,10 @@ async function getGeneralForumId() {
 
 //Session management
 app.use(session({
-  //secret: process.env.PASSPORT_SESSION_SECRET,
-  secret: 'hairy dog',
-  resave: false,
-  saveUninitialized: false
+    store: new RedisStore({ client: redisClient }),
+    secret: 'your-secret',
+    resave: false,
+    saveUninitialized: false
 }));
 
 //Database connection
