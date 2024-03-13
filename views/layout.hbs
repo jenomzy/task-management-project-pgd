@@ -70,42 +70,6 @@
     {{/if}}
 
 
-
-    {{!-- To Be Deleted --}}
-    {{#if user}}
-    {{!-- Navigation Content --}}
-    <ul class="nav nav-tabs nav-justified">
-      <li class="nav-item">
-        <a class="nav-link {{#eq activeTab 'dashboard'}}active{{/eq}}" href="/">Dashboard</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {{#eq activeTab 'tasks'}}active{{/eq}}" href="/usertasks">Projects</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {{#eq activeTab 'manageusers'}}active{{/eq}}" href="/usermanage">Manage Members</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {{#eq activeTab 'manageteams'}}active{{/eq}}" href="/teammanage">Manage Teams</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {{#eq activeTab 'managetasks'}}active{{/eq}}" href="/tasksmanage">Task Management</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {{#eq activeTab 'forum'}}active{{/eq}}" href="/forum">Forum</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {{#eq activeTab 'profile'}}active{{/eq}}" href="/profile">Profile</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {{#eq activeTab 'db'}}active{{/eq}}" href="/db">DB list</a>
-      </li>
-    </ul>
-    {{!-- Navigation Content End --}}
-    {{/if}}
-    {{!-- End Delete --}}
-
-
-
     <div class="w3-container">
       {{#if message.success}}
       <br>
