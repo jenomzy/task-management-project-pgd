@@ -10,7 +10,6 @@ var path = require('path');
 
 //Calling Database models
 var User = require('../models/user.model');
-var Forum = require('../models/forum.model');
 var Task = require('../models/tasks.model');
 var Team = require('../models/team.model');
 //const { User, Team, Task, Forum } = require('./models');
