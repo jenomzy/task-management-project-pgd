@@ -14,7 +14,6 @@
                         onclick="openFileExplorerModal('{{task._id}}')">Explore
                         Files</button>{{/if}}
                     <button class="btn btn-primary" onclick="openTaskModal('{{task._id}}')">View More Info</button>
-                    <button class="btn btn-info mt-2" onclick="openTaskCommentModal('{{task._id}}')">View Chats</button>
                 </div>
             </div>
         </div>
@@ -93,21 +92,6 @@
     </div>
 </div>
 
-<!-- Task Comment Modal -->
-<div id="commentModal" class="modal">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div id="taskComments">
-                </div>
-            </div>
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="closeTaskCommentModal()">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
     // Function to open the task info modal
@@ -135,22 +119,6 @@
         $('#taskModal').hide();
     }
 
-    // Function to open the task comment modal
-    function openTaskCommentModal(taskId) {
-        // AJAX call to fetch task comments and populate modal content
-        $.get(`/task/${taskId}/comments`, function (data) {
-            $('#taskComments').html(data);
-            $('#commentModal').show();
-        })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error("Failed to fetch task comments:", textStatus, errorThrown); // Log any errors
-            });
-    }
-
-    // Function to close the task comment modal
-    function closeTaskCommentModal() {
-        $('#commentModal').hide();
-    }
 
     // Function to open the file explorer modal for a specific task
     function openFileExplorerModal(taskId) {
