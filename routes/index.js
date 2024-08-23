@@ -644,8 +644,77 @@ router.post('/create-team-task', ensureAuthenticated, isAdmin, async (req, res) 
 
 //Profile link
 router.get('/profile', ensureAuthenticated, async (req, res) => {
-  var message = req.flash();
-  res.render('profile', { title: 'Profile', user: req.user, activeTab: 'profile', message: message });
+  try {
+    // Find the user by their ID and populate team details
+    const user = await User.findById(req.user._id)
+      .populate({
+        path: 'team',
+        populate: [
+          { path: 'leader', select: 'fname lname email' },
+          { path: 'members', select: 'fname lname email' }
+        ]
+      })
+      .exec();
+
+    if (!user) {
+      req.flash('error', 'User not found');
+      return res.redirect('/login');
+    }
+
+    // Render profile view with populated user details
+    res.render('profile', {
+      title: 'Profile',
+      user: user,
+      activeTab: 'profile',
+      message: req.flash()
+    });
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    req.flash('error', 'An error occurred while fetching profile data');
+    res.redirect('/login');
+  }
+});
+
+// POST route to handle creating a team task
+router.post('/changepassword', ensureAuthenticated, async (req, res) => {
+  try {
+      const { oldp, newp, newpp } = req.body;
+
+      // Validate passwords
+      if (newp !== newpp) {
+          req.flash('error', 'New passwords do not match');
+          return res.redirect('/profile');
+      }
+
+      // Find user
+      const user = await User.findById(req.user._id);
+      if (!user) {
+          req.flash('error', 'User not found');
+          return res.redirect('/profile'); 
+      }
+
+      // Check if old password is correct
+      const isMatch = await bcrypt.compare(oldp, user.password);
+      if (!isMatch) {
+          req.flash('error', 'Old password is incorrect');
+          return res.redirect('/profile'); 
+      }
+
+      // Hash new password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newp, salt);
+
+      // Update user password
+      user.password = hashedPassword;
+      await user.save();
+
+      req.flash('success', 'Password changed successfully');
+      res.redirect('/profile');
+  } catch (error) {
+      console.error('Error changing password:', error);
+      req.flash('error', 'An error occurred while changing password');
+      res.redirect('/profile');
+  }
 });
 
 
